@@ -1,0 +1,5 @@
+Rainier1.jpg  1
+Rainier2.jpg  .5
+Rainier3.jpg  .25
+Rainier4.jpg  .125
+Rainier5.jpg  .0333

@@ -1,0 +1,164 @@
+#credit to https://www.learnopencv.com/high-dynamic-range-hdr-imaging-using-opencv-cpp-python/
+#and https://docs.opencv.org/3.4/d3/db7/tutorial_hdr_imaging.html for their helpful
+#opencv tutorials
+
+import cv2
+import numpy
+import argparse
+import os
+from matplotlib import pyplot as plt
+
+savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Rainier/Result"
+
+def main():
+    parser = argparse.ArgumentParser(description='CS510 Computational Photography - Final Project - Scott Rubey.')
+    parser.add_argument('--input', type=str, help='Path to the directory that contains images and exposure times.')
+    args = parser.parse_args()
+
+    if not args.input:
+      parser.print_help()
+      exit(0)
+
+    images, times = loadImages(args.input)
+    align(images)
+    rc = getRespCurve(images, times)
+    hdr = mergeSrcImages(images, times, rc)
+    ldr = tonemap(hdr)
+    result = adjustParams(ldr)
+
+    #cv2.imshow('Edited Image', result)
+    #cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def loadImages(path):
+    images = []
+    times = []
+
+    print("Loading Source Images...")
+
+    with open(os.path.join(path, 'Rainier.txt')) as f:
+        content = f.readlines()
+
+    for line in content:
+        tokens = line.split()
+        images.append(cv2.imread(os.path.join(path, tokens[0])))
+        times.append(1 / float(tokens[1]))
+
+    return images, numpy.asarray(times, dtype=numpy.float32)
+
+def align(images):
+    print("Aligning Source Images...")
+    align = cv2.createAlignMTB()
+    align.process(images, images)
+
+def getRespCurve(images, times):
+    calDev = cv2.createCalibrateDebevec()
+    response = calDev.process(images, times)
+
+    return response
+
+def mergeSrcImages(images, times, response):
+    print("Creating HDR Image...")
+    merge = cv2.createMergeMertens()
+    hdr = merge.process(images, times, response)
+
+    # Save HDR image.
+    hdrCompleteName = os.path.join(savePath, "HDR.hdr")
+    cv2.imwrite(hdrCompleteName, hdr)
+
+    return hdr
+
+def tonemap(hdr):
+    def tmCallback(val):
+        pass
+
+    #create user interface w/ tone mapping controls
+    cv2.namedWindow("Tone Map", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Tone Map", 750, 750)
+    cv2.imshow("Tone Map", hdr)
+
+    cv2.createTrackbar("Gamma         ", "Tone Map", 0, 4, tmCallback)
+    cv2.createTrackbar("Compression", "Tone Map", 0, 4, tmCallback)
+    cv2.waitKey(0)
+
+    #capture trackbar values
+    gamma = cv2.getTrackbarPos("Gamma         ", "Tone Map")
+    comp = cv2.getTrackbarPos("Compression", "Tone Map")
+
+    cv2.destroyAllWindows()
+    print("Tone Mapping...")
+
+    # Tonemap using Reinhard's method to obtain 24-bit color image
+    tonemap = cv2.createTonemapReinhard(gamma/4.0, 0, comp/4.0, 0)
+    ldr = tonemap.process(hdr)
+    completeName = os.path.join(savePath, "Result.jpg")
+    cv2.imwrite(completeName, ldr * 255)
+
+    return ldr
+
+def adjustParams(ldr):
+    result = ldr
+
+    #create preview window
+    cv2.namedWindow("Preview", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Preview", 750, 750)
+    renderResult(result)
+
+    #create trackbars
+    cv2.createTrackbar("Brightness", "Preview", 250, 500,
+                       lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"), x,
+                                          cv2.getTrackbarPos("Whites      ", "Preview"), result))
+    cv2.createTrackbar("Saturation ", "Preview", 128, 255,
+                       lambda x: callback(x, cv2.getTrackbarPos("Brightness", "Preview"),
+                                          cv2.getTrackbarPos("Whites      ", "Preview"), result))
+    cv2.createTrackbar("Whites      ", "Preview", 50, 100,
+                       lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"),
+                                          cv2.getTrackbarPos("Brightness", "Preview"), x, result))
+
+    cv2.waitKey(0)
+
+def callback(sat, br, wp, result):
+    result = saturation(sat, result)
+    result = brightness(br, result)
+    #result = calcWhitePoint(wp, result)
+    renderResult(result)
+
+def brightness(br, result):
+    result = cv2.convertScaleAbs(result, -1, alpha=br)
+    return result
+
+def saturation(sat, result):
+    hsv = cv2.cvtColor(result, cv2.COLOR_BGR2HSV)
+    hsv[:,:,1] += (sat - 128)/750
+    result = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    return result
+
+'''
+def calcWhitePoint(wp, img):
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
+    L,a,b = cv2.split(lab)
+
+    for i in range(len(L)):
+        for j in range(len(L[i])):
+            if(L[i][j] < 50):
+                pass    
+            elif(wp > 50):
+                L[i][j] += (wp - 50)
+            else:
+                L[i][j] -= (50 - wp)
+
+#    max = L.max()
+#    hist, bins = numpy.histogram(img.flatten(), 256, [L.min(), max + (wp-50)])
+#    cdf = hist.cumsum()
+#    result = cdf * hist.max() / cdf.max()
+
+    merged = cv2.merge((L,a,b))
+    result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
+
+    return result
+'''
+
+def renderResult(result):
+    cv2.imshow("Preview", result)
+
+main()
