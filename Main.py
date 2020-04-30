@@ -106,31 +106,32 @@ def adjustParams(ldr):
 
     #create trackbars
     cv2.createTrackbar("Brightness", "Preview", 250, 500,
-                       lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"), x,
+                       lambda x: callback(x, cv2.getTrackbarPos("Saturation ", "Preview"),
                                           cv2.getTrackbarPos("Whites      ", "Preview"),
                                           cv2.getTrackbarPos("Blacks      ", "Preview"), result))
     cv2.createTrackbar("Saturation ", "Preview", 128, 255,
-                       lambda x: callback(x, cv2.getTrackbarPos("Brightness", "Preview"),
+                       lambda x: callback(cv2.getTrackbarPos("Brightness", "Preview"), x,
                                           cv2.getTrackbarPos("Whites      ", "Preview"),
                                           cv2.getTrackbarPos("Blacks      ", "Preview"), result))
     cv2.createTrackbar("Whites      ", "Preview", 50, 100,
-                       lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"),
-                                          cv2.getTrackbarPos("Brightness", "Preview"), x,
+                       lambda x: callback(cv2.getTrackbarPos("Brightness", "Preview"),
+                                          cv2.getTrackbarPos("Saturation ", "Preview"), x,
                                           cv2.getTrackbarPos("Blacks      ", "Preview"), result))
     cv2.createTrackbar("Blacks      ", "Preview", 50, 100,
-                       lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"),
-                                          cv2.getTrackbarPos("Brightness", "Preview"),
+                       lambda x: callback(cv2.getTrackbarPos("Brightness", "Preview"),
+                                          cv2.getTrackbarPos("Saturation ", "Preview"),
                                           cv2.getTrackbarPos("Whites      ", "Preview"), x, result))
 
     cv2.waitKey(0)
 
-def callback(sat, br, wht, blk, result):
+def callback(br, sat, wht, blk, result):
     result = saturation(sat, result)
-    #result = brightness(br, result)
-    result = calcWhites(wht, result)
     result = calcBlacks(blk, result)
+    result = brightness(br, result)
+    result = calcWhites(wht, result)
     renderResult(result)
 
+#interfering with blacks slider
 def brightness(br, result):
     result = cv2.convertScaleAbs(result, -1, alpha=br)
     return result
