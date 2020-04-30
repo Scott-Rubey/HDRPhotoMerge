@@ -127,8 +127,8 @@ def adjustParams(ldr):
 def callback(br, sat, wht, blk, result):
     result = saturation(sat, result)
     result = calcBlacks(blk, result)
-    result = brightness(br, result)
     result = calcWhites(wht, result)
+    result = brightness(br, result)
     renderResult(result)
 
 #interfering with blacks slider
