@@ -120,7 +120,7 @@ def adjustParams(ldr):
 def callback(sat, br, wp, result):
     result = saturation(sat, result)
     result = brightness(br, result)
-    #result = calcWhitePoint(wp, result)
+    result = calcWhites(wp, result)
     renderResult(result)
 
 def brightness(br, result):
@@ -133,30 +133,23 @@ def saturation(sat, result):
     result = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
     return result
 
-'''
-def calcWhitePoint(wp, img):
+def calcWhites(wp, img):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
     L,a,b = cv2.split(lab)
 
     for i in range(len(L)):
         for j in range(len(L[i])):
-            if(L[i][j] < 50):
+            if(L[i][j] < 75):
                 pass    
-            elif(wp > 50):
-                L[i][j] += (wp - 50)
+            elif(wp > 75):
+                L[i][j] += (wp - 75)
             else:
-                L[i][j] -= (50 - wp)
-
-#    max = L.max()
-#    hist, bins = numpy.histogram(img.flatten(), 256, [L.min(), max + (wp-50)])
-#    cdf = hist.cumsum()
-#    result = cdf * hist.max() / cdf.max()
+                L[i][j] -= (75 - wp)
 
     merged = cv2.merge((L,a,b))
     result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
 
     return result
-'''
 
 def renderResult(result):
     cv2.imshow("Preview", result)
