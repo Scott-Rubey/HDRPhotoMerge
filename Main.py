@@ -107,20 +107,28 @@ def adjustParams(ldr):
     #create trackbars
     cv2.createTrackbar("Brightness", "Preview", 250, 500,
                        lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"), x,
-                                          cv2.getTrackbarPos("Whites      ", "Preview"), result))
+                                          cv2.getTrackbarPos("Whites      ", "Preview"),
+                                          cv2.getTrackbarPos("Blacks      ", "Preview"), result))
     cv2.createTrackbar("Saturation ", "Preview", 128, 255,
                        lambda x: callback(x, cv2.getTrackbarPos("Brightness", "Preview"),
-                                          cv2.getTrackbarPos("Whites      ", "Preview"), result))
+                                          cv2.getTrackbarPos("Whites      ", "Preview"),
+                                          cv2.getTrackbarPos("Blacks      ", "Preview"), result))
     cv2.createTrackbar("Whites      ", "Preview", 50, 100,
                        lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"),
-                                          cv2.getTrackbarPos("Brightness", "Preview"), x, result))
+                                          cv2.getTrackbarPos("Brightness", "Preview"), x,
+                                          cv2.getTrackbarPos("Blacks      ", "Preview"), result))
+    cv2.createTrackbar("Blacks      ", "Preview", 50, 100,
+                       lambda x: callback(cv2.getTrackbarPos("Saturation ", "Preview"),
+                                          cv2.getTrackbarPos("Brightness", "Preview"),
+                                          cv2.getTrackbarPos("Whites      ", "Preview"), x, result))
 
     cv2.waitKey(0)
 
-def callback(sat, br, wp, result):
+def callback(sat, br, wht, blk, result):
     result = saturation(sat, result)
-    result = brightness(br, result)
-    result = calcWhites(wp, result)
+    #result = brightness(br, result)
+    result = calcWhites(wht, result)
+    result = calcBlacks(blk, result)
     renderResult(result)
 
 def brightness(br, result):
@@ -133,18 +141,36 @@ def saturation(sat, result):
     result = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
     return result
 
-def calcWhites(wp, img):
+def calcWhites(whts, img):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
     L,a,b = cv2.split(lab)
 
     for i in range(len(L)):
         for j in range(len(L[i])):
-            if(L[i][j] < 75):
+            if(L[i][j] < 65):
                 pass    
-            elif(wp > 75):
-                L[i][j] += (wp - 75)
+            elif(whts > 50):
+                L[i][j] += (whts - 50)
             else:
-                L[i][j] -= (75 - wp)
+                L[i][j] -= (50 - whts)
+
+    merged = cv2.merge((L,a,b))
+    result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
+
+    return result
+
+def calcBlacks(blks, img):
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
+    L,a,b = cv2.split(lab)
+
+    for i in range(len(L)):
+        for j in range(len(L[i])):
+            if(L[i][j] > 35):
+                pass
+            elif(blks < 50):
+                L[i][j] -= (50 - blks)
+            else:
+                L[i][j] += (blks - 50)
 
     merged = cv2.merge((L,a,b))
     result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
