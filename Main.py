@@ -6,7 +6,6 @@ import cv2
 import numpy
 import argparse
 import os
-from matplotlib import pyplot as plt
 
 savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Rainier/Result"
 
@@ -148,14 +147,16 @@ def calcWhites(whts, img):
 
     for i in range(len(L)):
         for j in range(len(L[i])):
-            if(L[i][j] < 65):
-                pass    
-            elif(whts > 50):
-                L[i][j] += (whts - 50)
+            if(whts > 50):
+                temp = whts - 50
+                L[i][j] += temp / 3.5
             else:
-                L[i][j] -= (50 - whts)
+                temp = 50 - whts
+                L[i][j] -= temp / 3.5
 
-    merged = cv2.merge((L,a,b))
+    Lnorm = cv2.normalize(L, None, L.min(), L.max(), cv2.NORM_MINMAX)
+
+    merged = cv2.merge((Lnorm,a,b))
     result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
 
     return result
