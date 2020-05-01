@@ -145,6 +145,8 @@ def calcWhites(whts, img):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
     L,a,b = cv2.split(lab)
 
+    Lmin = L.min()
+
     for i in range(len(L)):
         for j in range(len(L[i])):
             if(whts > 50):
@@ -154,8 +156,7 @@ def calcWhites(whts, img):
                 temp = 50 - whts
                 L[i][j] -= temp / 3.5
 
-    Lnorm = cv2.normalize(L, None, L.min(), L.max(), cv2.NORM_MINMAX)
-
+    Lnorm = cv2.normalize(L, None, Lmin, L.max(), cv2.NORM_MINMAX)
     merged = cv2.merge((Lnorm,a,b))
     result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
 
@@ -165,16 +166,19 @@ def calcBlacks(blks, img):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
     L,a,b = cv2.split(lab)
 
+    Lmax = L.max()
+
     for i in range(len(L)):
         for j in range(len(L[i])):
-            if(L[i][j] > 35):
-                pass
-            elif(blks < 50):
-                L[i][j] -= (50 - blks)
+            if(blks < 50):
+                temp = 50 - blks
+                L[i][j] -= temp / 3.5
             else:
-                L[i][j] += (blks - 50)
+                temp = blks - 50
+                L[i][j] += temp / 3.5
 
-    merged = cv2.merge((L,a,b))
+    Lnorm = cv2.normalize(L, None, L.min(), Lmax, cv2.NORM_MINMAX)
+    merged = cv2.merge((Lnorm,a,b))
     result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
 
     return result
