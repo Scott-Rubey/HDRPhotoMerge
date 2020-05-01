@@ -151,10 +151,10 @@ def calcWhites(whts, img):
         for j in range(len(L[i])):
             if(whts > 50):
                 temp = whts - 50
-                L[i][j] += temp / 3.5
+                L[i][j] += temp / 2.5
             else:
                 temp = 50 - whts
-                L[i][j] -= temp / 3.5
+                L[i][j] -= temp / 2.5
 
     Lnorm = cv2.normalize(L, None, Lmin, L.max(), cv2.NORM_MINMAX)
     merged = cv2.merge((Lnorm,a,b))
@@ -172,10 +172,10 @@ def calcBlacks(blks, img):
         for j in range(len(L[i])):
             if(blks < 50):
                 temp = 50 - blks
-                L[i][j] -= temp / 3.5
+                L[i][j] -= temp / 1.5
             else:
                 temp = blks - 50
-                L[i][j] += temp / 3.5
+                L[i][j] += temp / 1.5
 
     Lnorm = cv2.normalize(L, None, L.min(), Lmax, cv2.NORM_MINMAX)
     merged = cv2.merge((Lnorm,a,b))
