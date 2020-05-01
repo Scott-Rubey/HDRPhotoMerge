@@ -108,7 +108,7 @@ def adjustParams(ldr):
                        lambda x: callback(x, cv2.getTrackbarPos("Saturation ", "Preview"),
                                           cv2.getTrackbarPos("Whites      ", "Preview"),
                                           cv2.getTrackbarPos("Blacks      ", "Preview"), result))
-    cv2.createTrackbar("Saturation ", "Preview", 128, 255,
+    cv2.createTrackbar("Saturation ", "Preview", 50, 100,
                        lambda x: callback(cv2.getTrackbarPos("Brightness", "Preview"), x,
                                           cv2.getTrackbarPos("Whites      ", "Preview"),
                                           cv2.getTrackbarPos("Blacks      ", "Preview"), result))
@@ -137,7 +137,7 @@ def brightness(br, result):
 
 def saturation(sat, result):
     hsv = cv2.cvtColor(result, cv2.COLOR_BGR2HSV)
-    hsv[:,:,1] += (sat - 128)/750
+    hsv[:,:,1] += (sat - 50)/500
     result = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
     return result
 
