@@ -25,8 +25,10 @@ def main():
     ldr = tonemap(hdr)
     result = adjustParams(ldr)
 
-    #cv2.imshow('Edited Image', result)
-    #cv2.waitKey(0)
+    finImgFullName = os.path.join(savePath, "FinalEdit.jpg")
+    cv2.imwrite(finImgFullName, result)
+
+    print("\n***Image Saved***")
     cv2.destroyAllWindows()
 
 def loadImages(path):
@@ -123,6 +125,14 @@ def adjustParams(ldr):
 
     cv2.waitKey(0)
 
+    #get final trackbar positions
+    result = saturation(cv2.getTrackbarPos("Saturation ", "Preview"), result)
+    result = calcBlacks(cv2.getTrackbarPos("Blacks      ", "Preview"), result)
+    result = calcWhites(cv2.getTrackbarPos("Whites      ", "Preview"), result)
+    result = brightness(cv2.getTrackbarPos("Brightness", "Preview"), result)
+
+    return result
+
 def callback(br, sat, wht, blk, result):
     result = saturation(sat, result)
     result = calcBlacks(blk, result)
@@ -133,6 +143,7 @@ def callback(br, sat, wht, blk, result):
 #interfering with blacks slider
 def brightness(br, result):
     result = cv2.convertScaleAbs(result, -1, alpha=br*5)
+
     return result
 
 def saturation(sat, result):
@@ -185,5 +196,6 @@ def calcBlacks(blks, img):
 
 def renderResult(result):
     cv2.imshow("Preview", result)
+    return result
 
 main()
