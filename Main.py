@@ -104,7 +104,7 @@ def adjustParams(ldr):
     renderResult(result)
 
     #create trackbars
-    cv2.createTrackbar("Brightness", "Preview", 250, 500,
+    cv2.createTrackbar("Brightness", "Preview", 50, 100,
                        lambda x: callback(x, cv2.getTrackbarPos("Saturation ", "Preview"),
                                           cv2.getTrackbarPos("Whites      ", "Preview"),
                                           cv2.getTrackbarPos("Blacks      ", "Preview"), result))
@@ -132,7 +132,7 @@ def callback(br, sat, wht, blk, result):
 
 #interfering with blacks slider
 def brightness(br, result):
-    result = cv2.convertScaleAbs(result, -1, alpha=br)
+    result = cv2.convertScaleAbs(result, -1, alpha=br*5)
     return result
 
 def saturation(sat, result):
