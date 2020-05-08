@@ -7,7 +7,9 @@ import numpy
 import argparse
 import os
 
-savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Rainier/Result"
+#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Rainier/Result"
+#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/MonumentValley/Result"
+savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/BlueHoleCave/Result"
 
 def main():
     parser = argparse.ArgumentParser(description='CS510 Computational Photography - Final Project - Scott Rubey.')
@@ -37,7 +39,9 @@ def loadImages(path):
 
     print("Loading Source Images...")
 
-    with open(os.path.join(path, 'Rainier.txt')) as f:
+#    with open(os.path.join(path, 'Rainier.txt')) as f:
+#    with open(os.path.join(path, 'MonumentValley.txt')) as f:
+    with open(os.path.join(path, 'BlueHoleCave.txt')) as f:
         content = f.readlines()
 
     for line in content:
@@ -80,7 +84,12 @@ def tonemap(hdr):
 
     cv2.createTrackbar("Gamma         ", "Tone Map", 0, 4, tmCallback)
     cv2.createTrackbar("Compression", "Tone Map", 0, 4, tmCallback)
-    cv2.waitKey(0)
+
+    finished = False
+    while not finished:
+        key = cv2.waitKey(0)
+        if key == ord('a'):
+            finished = True
 
     #capture trackbar values
     gamma = cv2.getTrackbarPos("Gamma         ", "Tone Map")
@@ -92,7 +101,7 @@ def tonemap(hdr):
     # Tonemap using Reinhard's method to obtain 24-bit color image
     tonemap = cv2.createTonemapReinhard(gamma/4.0, 0, comp/4.0, 0)
     ldr = tonemap.process(hdr)
-    completeName = os.path.join(savePath, "Result.jpg")
+    completeName = os.path.join(savePath, "Tonemapped.jpg")
     cv2.imwrite(completeName, ldr * 255)
 
     return ldr
@@ -123,7 +132,11 @@ def adjustParams(ldr):
                                           cv2.getTrackbarPos("Saturation ", "Preview"),
                                           cv2.getTrackbarPos("Whites      ", "Preview"), x, result))
 
-    cv2.waitKey(0)
+    finished = False
+    while not finished:
+        key = cv2.waitKey(0)
+        if key == ord('a'):
+            finished = True
 
     #get final trackbar positions
     result = saturation(cv2.getTrackbarPos("Saturation ", "Preview"), result)

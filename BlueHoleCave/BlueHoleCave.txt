@@ -1,0 +1,6 @@
+BlueHoleCave1.jpg  1.5
+BlueHoleCave2.jpg  .7
+BlueHoleCave3.jpg  .333
+BlueHoleCave4.jpg  .1666
+BlueHoleCave5.jpg  .1
+BlueHoleCave6.jpg  .05
