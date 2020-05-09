@@ -1,0 +1,4 @@
+Bryce1.jpg  3
+Bryce2.jpg  1.5
+Bryce3.jpg  .7
+Bryce4.jpg  6

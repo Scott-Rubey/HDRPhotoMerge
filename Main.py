@@ -9,7 +9,8 @@ import os
 
 #savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Rainier/Result"
 #savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/MonumentValley/Result"
-savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/BlueHoleCave/Result"
+#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/BlueHoleCave/Result"
+savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Bryce/Result"
 
 def main():
     parser = argparse.ArgumentParser(description='CS510 Computational Photography - Final Project - Scott Rubey.')
@@ -41,7 +42,8 @@ def loadImages(path):
 
 #    with open(os.path.join(path, 'Rainier.txt')) as f:
 #    with open(os.path.join(path, 'MonumentValley.txt')) as f:
-    with open(os.path.join(path, 'BlueHoleCave.txt')) as f:
+#    with open(os.path.join(path, 'BlueHoleCave.txt')) as f:
+    with open(os.path.join(path, 'Bryce.txt')) as f:
         content = f.readlines()
 
     for line in content:
@@ -169,18 +171,16 @@ def calcWhites(whts, img):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
     L,a,b = cv2.split(lab)
 
-    Lmin = L.min()
+    Lmax = L.max()
 
-    for i in range(len(L)):
-        for j in range(len(L[i])):
-            if(whts > 50):
-                temp = whts - 50
-                L[i][j] += temp / 2.5
-            else:
-                temp = 50 - whts
-                L[i][j] -= temp / 2.5
+    if(whts > 50):
+        temp = whts - 50
+        Lmax += temp / 2.5
+    else:
+        temp = 50 - whts
+        Lmax -= temp / 2.5
 
-    Lnorm = cv2.normalize(L, None, Lmin, L.max(), cv2.NORM_MINMAX)
+    Lnorm = cv2.normalize(L, None, L.min(), Lmax, cv2.NORM_MINMAX)
     merged = cv2.merge((Lnorm,a,b))
     result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
 
@@ -190,18 +190,16 @@ def calcBlacks(blks, img):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
     L,a,b = cv2.split(lab)
 
-    Lmax = L.max()
+    Lmin = L.min()
 
-    for i in range(len(L)):
-        for j in range(len(L[i])):
-            if(blks < 50):
-                temp = 50 - blks
-                L[i][j] -= temp / 1.5
-            else:
-                temp = blks - 50
-                L[i][j] += temp / 1.5
+    if(blks < 50):
+        temp = 50 - blks
+        Lmin -= temp / 1.5
+    else:
+        temp = blks - 50
+        Lmin += temp / 1.5
 
-    Lnorm = cv2.normalize(L, None, L.min(), Lmax, cv2.NORM_MINMAX)
+    Lnorm = cv2.normalize(L, None, Lmin, L.max(), cv2.NORM_MINMAX)
     merged = cv2.merge((Lnorm,a,b))
     result = cv2.cvtColor(merged, cv2.COLOR_Lab2BGR)
 
