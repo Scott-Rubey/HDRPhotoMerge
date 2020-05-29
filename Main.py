@@ -8,9 +8,9 @@ import argparse
 import os
 
 #savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Rainier/Result"
-#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/MonumentValley/Result"
+savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/MonumentValley/Result"
 #savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/BlueHoleCave/Result"
-savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Bryce/Result"
+#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Bryce/Result"
 
 def main():
     parser = argparse.ArgumentParser(description='CS510 Computational Photography - Final Project - Scott Rubey.')
@@ -41,9 +41,9 @@ def loadImages(path):
     print("Loading Source Images...")
 
 #    with open(os.path.join(path, 'Rainier.txt')) as f:
-#    with open(os.path.join(path, 'MonumentValley.txt')) as f:
+    with open(os.path.join(path, 'MonumentValley.txt')) as f:
 #    with open(os.path.join(path, 'BlueHoleCave.txt')) as f:
-    with open(os.path.join(path, 'Bryce.txt')) as f:
+#    with open(os.path.join(path, 'Bryce.txt')) as f:
         content = f.readlines()
 
     for line in content:
@@ -85,7 +85,7 @@ def tonemap(hdr):
     cv2.imshow("Tone Map", hdr)
 
     cv2.createTrackbar("Gamma         ", "Tone Map", 0, 4, tmCallback)
-    cv2.createTrackbar("Compression", "Tone Map", 0, 4, tmCallback)
+    cv2.createTrackbar("Vibrance", "Tone Map", 0, 4, tmCallback)
 
     finished = False
     while not finished:
@@ -95,7 +95,7 @@ def tonemap(hdr):
 
     #capture trackbar values
     gamma = cv2.getTrackbarPos("Gamma         ", "Tone Map")
-    comp = cv2.getTrackbarPos("Compression", "Tone Map")
+    comp = cv2.getTrackbarPos("Vibrance", "Tone Map")
 
     cv2.destroyAllWindows()
     print("Tone Mapping...")
