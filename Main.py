@@ -7,10 +7,10 @@ import numpy
 import argparse
 import os
 
-#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Rainier/Result"
-savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/MonumentValley/Result"
-#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/BlueHoleCave/Result"
-#savePath = "/Users/srubey/Desktop/School/CS510 Computational Photography/Project/Bryce/Result"
+savePath = "Rainier/Result"
+#savePath = "MonumentValley/Result"
+#savePath = "BlueHoleCave/Result"
+#savePath = "Bryce/Result"
 
 def main():
     parser = argparse.ArgumentParser(description='CS510 Computational Photography - Final Project - Scott Rubey.')
@@ -40,8 +40,8 @@ def loadImages(path):
 
     print("Loading Source Images...")
 
-#    with open(os.path.join(path, 'Rainier.txt')) as f:
-    with open(os.path.join(path, 'MonumentValley.txt')) as f:
+    with open(os.path.join(path, 'Rainier.txt')) as f:
+#    with open(os.path.join(path, 'MonumentValley.txt')) as f:
 #    with open(os.path.join(path, 'BlueHoleCave.txt')) as f:
 #    with open(os.path.join(path, 'Bryce.txt')) as f:
         content = f.readlines()
