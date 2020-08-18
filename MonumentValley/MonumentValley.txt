@@ -1,5 +1,0 @@
-MonumentValley1.jpg  1
-MonumentValley2.jpg  .5
-MonumentValley3.jpg  .25
-MonumentValley4.jpg  .125
-MonumentValley5.jpg  .0666
