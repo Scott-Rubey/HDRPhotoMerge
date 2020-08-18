@@ -8,7 +8,7 @@ import argparse
 import os
 
 savePath = "Rainier/Result"
-#savePath = "BlueHoleCave/Result"
+savePath = "BlueHoleCave/Result"
 #savePath = "Bryce/Result"
 
 def main():
